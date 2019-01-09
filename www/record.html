@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>音视频录制demo</title>
+  <style>
+    *{
+      margin: 0;
+      padding: 0;
+      border: none;
+      list-style: none;
+    }
+    button{
+      padding: 3px;
+    }
+    .wrapper{
+      padding: 50px;
+    }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <!-- 录视频的地方 -->
+  <video id="video_input" class="player" width="200" height="150"></video>
+  <br>
+  <div id="msg"></div>
+  <button id="start_btn">开始录制</button>
+  <button id="stop_btn">停止录制</button>
+  <br>
+  <!-- 播放录制的视频 -->
+  <video id="video_output" class="player" width="200" height="150"></video>
+  <br>
+  <button id="play_btn">开始播放</button>
+  <a id="download_btn">下载</a>
+</div>
+
+<script>
+  window.onload = async function(){
+    const v1 = document.getElementById('video_input');
+    const v2 = document.getElementById('video_output');
+    const b1 = document.getElementById('start_btn');
+    const b2 = document.getElementById('stop_btn');
+    const b3 = document.getElementById('play_btn');
+    const b4 = document.getElementById('download_btn');
+    const msg = document.getElementById('msg');
+    b3.disabled = true;
+    b4.disabled = true;
+
+    /**
+     * 1.获取用户媒体输入设备，获取到stream流
+     * 这里也不做失败处理了，直接await获取stream
+     */
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: true    //有更详细的配置，可以去查文档
+    });
+    v1.srcObject = stream;
+    v1.play();
+
+    const recorder = new MediaRecorder(stream, {
+      // mimeType: 'video/mp4'    //指明录制格式, 需要看浏览器支持啥
+    });  //创建录制对象
+    const chunks = [];                            //储存录制结果
+    recorder.ondataavailable = function(e) {     //录制对象可以存录制数据就向结果中push
+      chunks.push(e.data);
+      console.log('录制中');
+    };
+    console.log(recorder);
+
+    b1.onclick = function (e) { //点击开始录制
+      recorder.start(1000);   //参数1000指每1s保存一次
+      msg.innerText = '录制中';
+    };
+
+    b2.onclick = function (e) {  //结束录制
+      v1.pause();
+      recorder.stop();
+      msg.innerText = '录制结束，可以在下面播放';
+      let blob = new Blob(chunks, {type: 'video/webm'});   //将录制的结果转成blob对象，可以用来播放，也可以导出
+      let url = URL.createObjectURL(blob);
+
+      v2.src = url;
+      b4.download = 'record.webm';
+      b4.href = url;
+      b3.disabled = false;
+    };
+
+    b3.onclick = function (e) {
+      v2.play();
+    }
+
+  }
+</script>
+</body>
+</html>
