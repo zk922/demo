@@ -1,0 +1,20 @@
+{
+  "name": "export-excel-demo",
+  "version": "1.0.0",
+  "description": "demo ~",
+  "main": "main.js",
+  "author": "zk922",
+  "license": "MIT",
+  "dependencies": {
+    "koa": "^2.6.2",
+    "koa-bodyparser": "^4.2.1",
+    "koa-router": "^7.4.0",
+    "koa-static": "^5.0.0",
+    "node-xlsx": "^0.12.1"
+  },
+  "devDependencies": {
+    "@types/koa": "^2.0.48",
+    "@types/koa-router": "^7.0.37",
+    "@types/koa-static": "^4.0.0"
+  }
+}

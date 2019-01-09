@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>export excel</title>
+</head>
+<body>
+<button id="export1">点击导出excel，ObjectUrl方式</button>
+<button id="export2">点击导出excel，直接下载方式</button>
+<script>
+  let btn1 = document.getElementById('export1');
+  let btn2 = document.getElementById('export2');
+  btn1.addEventListener('click', function () {
+    //方法一，先获取到二进制数据，本地转成objectUrl，然后通过浏览器下载生成excel
+    let someData = {};
+    let xhr = new XMLHttpRequest();
+    xhr.open('get', '/api/export-excel');
+    xhr.responseType = 'blob';
+    xhr.send(JSON.stringify(someData));
+    
+    xhr.onload = function () {
+      let objUrl = URL.createObjectURL(new Blob([xhr.response], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
+      let a = document.createElement('a');
+      a.href = objUrl;
+      a.download = 'result.xlsx';
+      a.click();
+    }
+  });
+
+  btn2.addEventListener('click', function () {
+    //方法二，直接使用get请求，参数通过url直接传到后台即可
+    let a = document.createElement('a');
+    a.href = '/api/export-excel?somedata=123';
+    a.download = 'result.xlsx';
+    a.click();
+  });
+  
+</script>
+</body>
+</html>
