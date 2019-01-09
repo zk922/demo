@@ -1,6 +1,7 @@
 const Koa = require('koa');
 const koaStatic = require('koa-static');
 const bodyparser = require('koa-bodyparser');
+const cp = require('child_process');
 
 const router = require('./router');
 
@@ -19,4 +20,5 @@ app.use(router);
 
 app.listen(8888, function () {
   console.log('server started at port 8888');
+  cp.exec('explorer http://localhost:8888')
 });
